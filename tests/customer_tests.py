@@ -1,6 +1,6 @@
 from nose.tools import assert_equals, nottest
 
-from abcbank.account import Account, CHECKING, SAVINGS
+from abcbank.account import Account, CHECKING, SAVINGS, MAXI_SAVINGS
 from abcbank.customer import Customer
 
 
@@ -33,11 +33,18 @@ def test_transfer():
     bob = Customer("Bob").openAccount(CHECKING)
     bob.openAccount(SAVINGS)
     bob.accounts[CHECKING].deposit(500)
-    bob.transfer(CHECKING, SAVINGS, 100)
-    assert_equals(bob.accounts[CHECKING].availableBalance, 400)
-    assert_equals(bob.accounts[SAVINGS].availableBalance, 100)
+
+    status = bob.transfer(CHECKING, SAVINGS, 100)
+    assert_equals(status, "Transfer Succeeded", "Checking status of transfer")
+    assert_equals(bob.accounts[CHECKING].availableBalance, 400, "Checking balance after transfer")
+    assert_equals(bob.accounts[SAVINGS].availableBalance, 100, "Checking balance after transfer")
+
     bob.accounts[SAVINGS].deposit(400)
-    assert_equals(bob.accounts[SAVINGS].availableBalance, 500)
+    assert_equals(bob.accounts[SAVINGS].availableBalance, 500, "Checking balance after deposit")
+
+    status = bob.transfer(MAXI_SAVINGS, CHECKING, 100)
+    assert_equals(status, "Invalid Account")
+
 
 @nottest
 def test_threeAccounts():

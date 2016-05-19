@@ -16,16 +16,16 @@ class Customer:
 
     def transfer(self, fromAccount, toAccount, amount):
         if fromAccount not in self.accounts or toAccount not in self.accounts:
-            return ValueError("Invalid Account")
+            return "Invalid Account"
         _from = self.accounts[fromAccount]
         _to = self.accounts[toAccount]
         if _from.availableBalance < 0 or amount > _from.availableBalance:
-            return ValueError("Account does not have sufficient balance")
+            return "Account does not have sufficient balance"
         _from.availableBalance -= amount
         _to.availableBalance += amount
         _from.transactions.append(Transaction(-amount))
         _to.transactions.append(Transaction(amount))
-        return self
+        return "Transfer Succeeded"
 
     def numAccs(self):
         return len(self.accounts)
