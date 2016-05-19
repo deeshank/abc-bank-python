@@ -1,3 +1,4 @@
+from abcbank.date_provider import DateUtils
 from abcbank.transaction import Transaction
 
 CHECKING = 0
@@ -11,38 +12,70 @@ class Account:
         self.transactions = []
         self.availableBalance = 0
 
-    def deposit(self, amount):
-        if (amount <= 0):
+    def deposit(self, amount, date_deposited=None):
+        if amount <= 0:
             raise ValueError("amount must be greater than zero")
         else:
-            self.transactions.append(Transaction(amount))
+            if date_deposited:
+                try:
+                    date = DateUtils.toDate(date_deposited)
+                    self.transactions.append(Transaction(amount, date))
+                except ValueError:
+                    return ValueError("Incorrect date format")
+            else:
+                self.transactions.append(Transaction(amount))
             self.availableBalance += amount
 
     def withdraw(self, amount):
-        if (amount <= 0):
+        if amount <= 0:
             raise ValueError("amount must be greater than zero")
-        elif (amount > self.availableBalance):
+        elif amount > self.availableBalance:
             raise ValueError("amount greater than available balance")
         else:
             self.transactions.append(Transaction(-amount))
             self.availableBalance -= amount
 
     def interestEarned(self):
-        amount = self.sumTransactions()
+        amount = self.availableBalance
         if self.accountType == SAVINGS:
-            if (amount <= 1000):
+            if amount <= 1000:
                 return amount * 0.001
             else:
                 return 1 + (amount - 1000) * 0.002
         if self.accountType == MAXI_SAVINGS:
-            if (amount <= 1000):
-                return amount * 0.02
-            elif (amount <= 2000):
-                return 20 + (amount - 1000) * 0.05
+            endDate = DateUtils.now()
+            startDate = DateUtils.add(endDate, -10)
+            _transactions = self.getTransaction(startDate, endDate)
+            withdrawn = 0
+            for t in _transactions:
+                if t.amount < 0:
+                    withdrawn = 1
+                    break
+            if withdrawn == 1:
+                return amount * (0.1 / 100.0)
             else:
-                return 70 + (amount - 2000) * 0.1
+                return amount * (5 / 100.0)
         else:
             return amount * 0.001
 
     def sumTransactions(self, checkAllTransactions=True):
         return sum([t.amount for t in self.transactions])
+
+    def getTransaction(self, startDate, endDate):
+        transaction_data = []
+        try:
+            start_date = DateUtils.toDate(startDate)
+            end_date = DateUtils.toDate(endDate)
+        except ValueError:
+            return ValueError("Incorrect date format")
+        for transaction in self.transactions:
+            if DateUtils.isDateWithinRange(transaction.transactionDate, startDate, endDate):
+                transaction_data.append(transaction)
+        return transaction_data
+
+    # @staticmethod
+    # def dailyInterest(P, r, days):
+    #     I = P
+    #     for x in range(days):
+    #         I *= 1 + ((r / 100) / 365)
+    #     return I
