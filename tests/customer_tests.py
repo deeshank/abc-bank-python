@@ -29,6 +29,16 @@ def test_twoAccounts():
     assert_equals(oscar.numAccs(), 2)
 
 
+def test_transfer():
+    bob = Customer("Bob").openAccount(CHECKING)
+    bob.openAccount(SAVINGS)
+    bob.accounts[CHECKING].deposit(500)
+    bob.transfer(CHECKING, SAVINGS, 100)
+    assert_equals(bob.accounts[CHECKING].availableBalance, 400)
+    assert_equals(bob.accounts[SAVINGS].availableBalance, 100)
+    bob.accounts[SAVINGS].deposit(400)
+    assert_equals(bob.accounts[SAVINGS].availableBalance, 500)
+
 @nottest
 def test_threeAccounts():
     oscar = Customer("Oscar").openAccount(Account(SAVINGS))

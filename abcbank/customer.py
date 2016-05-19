@@ -1,30 +1,48 @@
-from account import CHECKING, SAVINGS, MAXI_SAVINGS
+from account import CHECKING, SAVINGS, MAXI_SAVINGS, Account
+from transaction import Transaction
 
 
 class Customer:
     def __init__(self, name):
         self.name = name
-        self.accounts = []
+        self.accounts = {}
 
     def openAccount(self, account):
-        self.accounts.append(account)
+        if isinstance(account, Account):
+            self.accounts[account.accountType] = account
+        elif isinstance(account, int):
+            self.accounts[account] = Account(account)
+        return self
+
+    def transfer(self, fromAccount, toAccount, amount):
+        if fromAccount not in self.accounts or toAccount not in self.accounts:
+            return ValueError("Invalid Account")
+        _from = self.accounts[fromAccount]
+        _to = self.accounts[toAccount]
+        if _from.availableBalance < 0 or amount > _from.availableBalance:
+            return ValueError("Account does not have sufficient balance")
+        _from.availableBalance -= amount
+        _to.availableBalance += amount
+        _from.transactions.append(Transaction(-amount))
+        _to.transactions.append(Transaction(amount))
         return self
 
     def numAccs(self):
         return len(self.accounts)
 
     def totalInterestEarned(self):
-        return sum([a.interestEarned() for a in self.accounts])
+        return sum([self.accounts[accountType].interestEarned() for accountType in self.accounts.keys()])
 
     # This method gets a statement
     def getStatement(self):
         # JIRA-123 Change by Joe Bloggs 29/7/1988 start
         statement = None  # reset statement to null here
         # JIRA-123 Change by Joe Bloggs 29/7/1988 end
-        totalAcrossAllAccounts = sum([a.sumTransactions() for a in self.accounts])
+        totalAcrossAllAccounts = sum(
+            [self.accounts[accountType].sumTransactions() for accountType in self.accounts.keys()])
         statement = "Statement for %s" % self.name
-        for account in self.accounts:
-            statement = statement + self.statementForAccount(account)
+        for accountType in self.accounts.keys():
+            statement += self.statementForAccount(self.accounts[accountType])
         statement = statement + "\n\nTotal In All Accounts " + _toDollars(totalAcrossAllAccounts)
         return statement
 
