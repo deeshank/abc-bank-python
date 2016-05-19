@@ -9,18 +9,23 @@ class Account:
     def __init__(self, accountType):
         self.accountType = accountType
         self.transactions = []
+        self.availableBalance = 0
 
     def deposit(self, amount):
         if (amount <= 0):
             raise ValueError("amount must be greater than zero")
         else:
             self.transactions.append(Transaction(amount))
+            self.availableBalance += amount
 
     def withdraw(self, amount):
         if (amount <= 0):
             raise ValueError("amount must be greater than zero")
+        elif (amount > self.availableBalance):
+            raise ValueError("amount greater than available balance")
         else:
             self.transactions.append(Transaction(-amount))
+            self.availableBalance -= amount
 
     def interestEarned(self):
         amount = self.sumTransactions()
