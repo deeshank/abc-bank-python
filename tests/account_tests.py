@@ -1,7 +1,7 @@
 from nose.tools import assert_equal
 
 from abcbank.account import Account, CHECKING
-from abcbank.transaction import Transaction
+
 
 
 def test_accountBalance():

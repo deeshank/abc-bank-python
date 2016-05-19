@@ -13,11 +13,12 @@ def test_add_date():
     date1 = "01/01/2016"
     assert_equals(DateUtils.add(date1, 5), "01/06/2016")
 
+
 def test_isdateWithinRange():
-    date ="01/04/2016"
+    date = "01/04/2016"
     startDate = "01/01/2016"
     endDate = "01/06/2016"
-    assert_equals(DateUtils.isDateWithinRange(date,startDate,endDate),True)
+    assert_equals(DateUtils.isDateWithinRange(date, startDate, endDate), True)
 
     date = "01/04/2015"
     startDate = "01/01/2016"
