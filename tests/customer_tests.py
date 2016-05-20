@@ -44,10 +44,3 @@ def test_transfer():
 
     status = bob.transfer(MAXI_SAVINGS, CHECKING, 100)
     assert_equals(status, "Invalid Account")
-
-
-@nottest
-def test_threeAccounts():
-    oscar = Customer("Oscar").openAccount(Account(SAVINGS))
-    oscar.openAccount(Account(CHECKING))
-    assert_equals(oscar.numAccs(), 3)
