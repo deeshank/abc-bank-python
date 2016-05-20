@@ -3,6 +3,12 @@ class Bank:
         self.customers = []
 
     def addCustomer(self, customer):
+        """
+        Add a customer to the bank
+
+        :param customer: Customer Name
+        :return: None
+        """
         self.customers.append(customer)
 
     def customerSummary(self):
@@ -15,6 +21,11 @@ class Bank:
         return str(number) + " " + (word if (number == 1) else word + "s")
 
     def totalInterestPaid(self):
+        """
+        Total Interest Paid for all customer for all acounts the customer possess
+
+        :return: interest payout
+        """
         total = 0
         for c in self.customers:
             total += c.totalInterestEarned()

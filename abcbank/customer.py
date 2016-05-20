@@ -8,6 +8,12 @@ class Customer:
         self.accounts = {}
 
     def openAccount(self, account):
+        """
+        Create/Open an account
+
+        :param account: account type
+        :return: Customer object
+        """
         if isinstance(account, Account):
             self.accounts[account.accountType] = account
         elif isinstance(account, int):
@@ -15,6 +21,14 @@ class Customer:
         return self
 
     def transfer(self, fromAccount, toAccount, amount):
+        """
+        Transfer money between the customer accounts
+
+        :param fromAccount: Account Type
+        :param toAccount: Account Type
+        :param amount: Amount to be transfered
+        :return: status of the transfer
+        """
         if fromAccount not in self.accounts or toAccount not in self.accounts:
             return "Invalid Account"
         _from = self.accounts[fromAccount]
@@ -28,6 +42,10 @@ class Customer:
         return "Transfer Succeeded"
 
     def numAccs(self):
+        """
+
+        :return: number of accounts the customer has opened
+        """
         return len(self.accounts)
 
     def totalInterestEarned(self):
