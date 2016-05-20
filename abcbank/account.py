@@ -58,6 +58,29 @@ class Account:
         else:
             return amount * 0.001
 
+    def interest_earned_after_x_days(self, days=1):
+        amount = self.availableBalance
+        if self.accountType == SAVINGS:
+            if amount <= 1000:
+                return Account.daily_interest(amount, 0.1, days)
+            else:
+                return Account.daily_interest(amount-1000, 0.2, days) + Account.daily_interest(1000, 0.1, days)
+        if self.accountType == MAXI_SAVINGS:
+            endDate = DateUtils.now()
+            startDate = DateUtils.add(endDate, -10)
+            _transactions = self.getTransaction(startDate, endDate)
+            withdrawn = 0
+            for t in _transactions:
+                if t.amount < 0:
+                    withdrawn = 1
+                    break
+            if withdrawn == 1:
+                return Account.daily_interest(amount, 0.1, days)
+            else:
+                return Account.daily_interest(amount, 5, days)
+        else:
+            return Account.daily_interest(amount, 0.1, days)
+
     def sumTransactions(self, checkAllTransactions=True):
         return sum([t.amount for t in self.transactions])
 
@@ -73,9 +96,10 @@ class Account:
                 transaction_data.append(transaction)
         return transaction_data
 
-    # @staticmethod
-    # def dailyInterest(P, r, days):
-    #     I = P
-    #     for x in range(days):
-    #         I *= 1 + ((r / 100) / 365)
-    #     return I
+    @staticmethod
+    def daily_interest(P, r, days):
+        I = P
+        for x in range(days):
+            I *= 1 + ((r / 100.0) / 365.0)
+        return round(I,2)
+

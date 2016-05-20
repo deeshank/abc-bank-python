@@ -1,7 +1,6 @@
 from nose.tools import assert_equal
 
-from abcbank.account import Account, CHECKING
-
+from abcbank.account import Account, CHECKING, MAXI_SAVINGS
 
 
 def test_accountBalance():
@@ -26,3 +25,11 @@ def test_checkNoOfTransaction():
     test_acc.deposit(500, "01/06/2016")
     test_acc.deposit(500, "01/07/2016")
     assert_equal(len(test_acc.getTransaction("01/02/2016", "01/04/2016")), 3)
+
+
+def test_interest_after_x_days():
+    test_acc = Account(MAXI_SAVINGS)
+    test_acc.deposit(3000, "01/01/2016")
+    assert_equal(test_acc.interest_earned_after_x_days(1), 3000.41)
+    assert_equal(test_acc.interest_earned_after_x_days(2), 3000.82)
+    assert_equal(test_acc.interest_earned_after_x_days(3), 3001.23)
